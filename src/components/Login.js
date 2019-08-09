@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
+import { Route, Link, BrowserRouter as Router } from 'react-router-dom';
+import Dashboard from './Dashboard';
 
 class Login extends Component{
+
+	state = {
+		count:1
+	}
+
 	render(){
 
 		const a = {
@@ -25,7 +32,7 @@ class Login extends Component{
 			</p>
 
 			<p>
-				<button className="w3-button w3-section w3-teal w3-ripple"> Log in </button>
+				<Link to={'/Dashboard'} className="nav-link"><button className="w3-button w3-section w3-teal w3-ripple"> Log in </button></Link>
 			</p>
 
 			</form>

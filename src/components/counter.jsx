@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import Login from './Login';
 import Signup from './Signup';
+
 import 'bootstrap/dist/css/bootstrap.css';
 
 class  Counter extends Component {
-	state = {
-		count:1
-	}
+	
 	render() {
 		return (
 			<div>
@@ -16,9 +15,14 @@ class  Counter extends Component {
                         <ul className="navbar-nav mr-auto">
                             <li className="nav-item">
                                 <Link to={'/'} className="nav-link">Home</Link>
-                                <Link to={'/Signup'} className="nav-link">Create account</Link>
-                                <Link to={'/Login'} className="nav-link">Login</Link>
                             </li>
+                            <li className="nav-item">
+                                <Link to={'/Signup'} className="nav-link">Create account</Link>
+                             </li>
+                            <li className="nav-item">
+                                <Link to={'/Login'} className="nav-link">Login</Link>
+                             </li>
+                            
                         </ul>
                     </div>
                 </nav>
