@@ -1,101 +1,210 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import './dashboard.css';
+import { Modal, Button } from 'react-bootstrap';
+import { BrowserRouter as Router} from 'react-router-dom';
 import './Dashboard.css';
-import avatar from '../img/avatar.jpg'
+import axios from 'axios';
+import Sidebar from './Sidebar';
+import TableRow from './TableRow';
 
 class Dashboard extends Component{
 
+	constructor(props) {
+        super(props);
+
+        this.state = {
+            show: false,
+            id:'',
+            task: '',
+            status: 'new',
+      		data: []
+        };
+    }
+
+    componentWillMount(){
+      axios.get('http://localhost/api/todolist/read.php')
+        .then(response => {
+          // console.log(response.data.records);
+          this.setState({ data: response.data.records});
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+    }
+
+    onChangeId = (e)=> {
+        this.setState({
+        id: e.target.value
+        });
+    }
+
+    onChangeTask = (e)=> {
+        this.setState({
+        task: e.target.value
+        });
+    }
+
+    onChangeStatus = (e)=> {
+        this.setState({
+        status: e.target.value
+        });
+    }
+
+    getTodolist = (object) =>{
+        object.show = true;
+        this.setState(object);
+    }
+
+	handleShow = () =>{
+    this.setState({ show: true });
+    }
+
+    handleClose = () =>{
+    this.setState({ show: false });
+    }
+
+    initFunction = () => {
+        this.componentWillMount();
+    }
+
+    deleteTodolist = (object) =>{
+        axios.get('http://localhost/api/todolist/delete.php?id='+object)
+        .then(response => {
+            console.log(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+       this.initFunction();
+    }
+
+    onSubmit = (e) => {
+        e.preventDefault();
+        const qs = require('qs');  
+
+        const obj = {
+            id: this.state.id,
+            task: this.state.task,
+            status: this.state.status
+            }
+            console.log(obj);
+        if(obj.id === ""){
+            axios.post('http://localhost/api/todolist/create.php',qs.stringify(obj))
+            .then(response => {this.setState({message: response.data.message})
+            /*console.log(response.data)*/})
+            .catch(error => console.log(error));
+            this.setState({
+                id:'',
+                task: '',
+                status: ''
+                })
+            this.initFunction();
+            }else{
+                axios.post('http://localhost/api/todolist/update.php', qs.stringify(obj))
+            .then(res => {this.setState({message: res.data.message})
+            console.log(res.data)});
+            this.setState({
+                id:'',
+                task: '',
+                status: ''
+                })
+            this.initFunction();
+            }
+             
+        }
+
 	render (){
 		return (
+			<Router>
 			<div>
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 			<div className="container-fluid">
 				<div className="row content">
-					<div className="col-sm-3 sidenav">
-						<h4>John's Blog</h4>
-						<ul className="nav nav-pills nav-stacked">
-							<li className="active"><a href="#section1">Home</a></li>
-							<li><a href="#section2">Friends</a></li>
-							<li><a href="#section3">Family</a></li>
-							<li><a href="#section3">Photos</a></li>
-						</ul>
-						<br/>
-						<div className="input-group">
-							<input type="text" className="form-control" placeholder="Search Blog.."/>
-							<span className="input-group-btn">
-							<button className="btn btn-default" type="button">
-							<span className="glyphicon glyphicon-search"></span>
-							</button>
-							</span>
-						</div>
-					</div>
+					<Sidebar />
 					<div className="col-sm-9">
-						<h4><small>RECENT POSTS</small></h4>
-						<hr/>
-						<h2>I Love Food</h2>
-						<h5><span className="glyphicon glyphicon-time"></span> Post by Jane Dane, Sep 27, 2015.</h5>
-						<h5><span className="label label-danger">Food</span> <span className="label label-primary">Ipsum</span></h5>
-						<br/>
-						<p>Food is my passion. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-						<br/><br/>
-						<h4><small>RECENT POSTS</small></h4>
-						<hr/>
-						<h2>Officially Blogging</h2>
-						<h5><span className="glyphicon glyphicon-time"></span> Post by John Doe, Sep 24, 2015.</h5>
-						<h5><span className="label label-success">Lorem</span></h5>
-						<br/>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-						<hr/>
-						<h4>Leave a Comment:</h4>
-						<form role="form">
-							<div className="form-group">
-								<textarea className="form-control" rows="3" required></textarea>
-							</div>
-							<button type="submit" className="btn btn-success">Submit</button>
-						</form>
-						<br/><br/>
-						<p><span className="badge">2</span> Comments:</p>
-						<br/>
-						<div className="row">
-							<div className="col-sm-2 text-center">
-								<img src={avatar} className="img-circle" height="65" width="65" alt="Avatar"/>
-							</div>
-							<div className="col-sm-10">
-								<h4>Anja <small>Sep 29, 2015, 9:12 PM</small></h4>
-								<p>Keep up the GREAT work! I am cheering for you!! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-								<br/>
-							</div>
-							<div className="col-sm-2 text-center">
-								<img src={avatar} className="img-circle" height="65" width="65" alt="Avatar"/>
-							</div>
-							<div className="col-sm-10">
-								<h4>John Row <small>Sep 25, 2015, 8:25 PM</small></h4>
-								<p>I am so happy for you man! Finally. I am looking forward to read about your trendy life. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-								<br/>
-								<p><span className="badge">1</span> Comment:</p>
-								<br/>
-								<div className="row">
-									<div className="col-sm-2 text-center">
-										<img src={avatar} className="img-circle" height="65" width="65" alt="Avatar"/>
+						<h2> Welcome !! </h2>
+		                <Button style={{float: 'right'}} variant="primary" onClick={this.handleShow}>New Task</Button>
+	                	<Modal show={this.state.show} onHide={this.handleClose}>
+	                	<form onSubmit={this.onSubmit}>
+		                	<Modal.Header closeButton>
+	                        	<Modal.Title>Add New Task</Modal.Title>
+	                    	</Modal.Header>
+	                    	<Modal.Body>
+	                    		<div style={{marginTop: 10}}>
+		                    		<div className="form-group">
+	                                    <input 
+	                                    type="hidden" 
+	                                    className="form-control"
+	                                    value={this.state.id}
+	                                    onChange={this.onChangeId}
+	                                    />
+	                                </div>
+	                                <div className="form-group">
+	                                	<label>Task:  </label>
+						            		<input type= "text"
+						            		className="form-control"
+						            		value={this.state.task}
+						            		onChange={this.onChangeTask}
+						            		/>
+						            </div>
+						            <div className="form-group">
+						            <label>status:  </label>
+							            <select
+							            className = "form-control"
+							            name = "status" 
+							            onChange={this.onChangeStatus}
+							            value={this.state.status} 
+							            defaultValue= "new" 
+							            >
+											<option value="new">New</option>
+											<option value="pending">Pending</option>
+											<option value="completed">Completed</option>
+										</select>
 									</div>
-									<div className="col-xs-10">
-										<h4>Nested Bro <small>Sep 25, 2015, 8:28 PM</small></h4>
-										<p>Me too! WOW!</p>
-										<br/>
-									</div>
-								</div>
-							</div>
+						        </div>
+					        </Modal.Body>
+		                    <Modal.Footer>
+		                        <Button variant="secondary" onClick={this.handleClose}>Close</Button>
+		                        <Button variant="primary" value="submit" onClick={this.handleClose} type="submit">Save</Button>
+		                    </Modal.Footer>
+				        </form>
+				        </Modal>
+				        <div>
+							<h3 align="center">Task List</h3>
+							<table className="table table-striped" style={{ marginTop: 20 }}>
+								<thead>
+									<tr>
+									<th>ID</th>
+									<th>Task</th>
+									<th>status</th>
+									<th colSpan="2">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									{ this.tabRow() }
+								</tbody>
+							</table>
 						</div>
-					</div>
-				</div>
-			</div>
-		<footer class="container-fluid">
+	                </div> {/*colsm-9*/}
+				</div>{/*row-content*/}
+			</div>{/*contrainer fluid*/}
+		<footer className="container-fluid">
 		  <p>Footer Text</p>
 		</footer>
 		</div>
+		</Router>
 		);
 	}
+
+
+	tabRow = () => {
+    	const getTodolist = this.getTodolist;
+    	const deleteTodolist = this.deleteTodolist;
+      return this.state.data.map(function(object, i){
+          return (<TableRow obj={object} key={i} getTodolist={getTodolist} deleteTodolist={deleteTodolist}></TableRow>);
+      });
+    }
 }
 export default Dashboard;

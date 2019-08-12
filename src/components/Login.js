@@ -12,7 +12,7 @@ class Login extends Component{
 	render(){
 
 		const a = {
-			width : '20%'
+			width : '50%'
 		}
 
 		return(
